@@ -47,7 +47,7 @@ namespace ModioModNetworker
 {
     public struct ModioModNetworkerUpdaterVersion
     {
-        public const string versionString = "2.6.0";
+        public const string versionString = "2.7.0";
     }
     
     public class MainClass : MelonMod
@@ -153,11 +153,11 @@ namespace ModioModNetworker
             AssetBundle uiAssets;
             if (!HelperMethods.IsAndroid())
             {
-                uiAssets = EmbeddedAssetBundle.LoadFromAssembly(Assembly.GetExecutingAssembly(), "ModioModNetworker.Resources.networkermenu.networker");
+                uiAssets = HelperMethods.LoadEmbeddedAssetBundle(Assembly.GetExecutingAssembly(), "ModioModNetworker.Resources.networkermenu.networker");
             }
             else
             {
-                uiAssets = EmbeddedAssetBundle.LoadFromAssembly(Assembly.GetExecutingAssembly(), "ModioModNetworker.Resources.networkermenu.android.networker");
+                uiAssets = HelperMethods.LoadEmbeddedAssetBundle(Assembly.GetExecutingAssembly(), "ModioModNetworker.Resources.networkermenu.android.networker");
             }
 
             NetworkerAssets.LoadAssetsUI(uiAssets);

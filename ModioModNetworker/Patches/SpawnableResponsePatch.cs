@@ -31,13 +31,13 @@ namespace ModioModNetworker.Patches
                         return true;
                     }
 
-                    if (!CrateFilterer.HasCrate<GameObjectCrate>(new Barcode(data.Barcode)))
+                    if (!CrateFilterer.HasCrate<GameObjectCrate>(new Barcode(data.SpawnData.Barcode)))
                     {
 
 
                         SpawnableHoldQueue.AddToQueue(new SpawnableHoldQueueData()
                         {
-                            missingBarcode = data.Barcode,
+                            missingBarcode = data.SpawnData.Barcode,
                             _data = data
                         });
                         return false;

@@ -142,38 +142,51 @@ namespace ModioModNetworker.Data
 
         public ModListing ToModListing() {
             ModListing modListing = new ModListing();
-            modListing.Author = "ModIoModNetworker";
-            modListing.Title = modId;
-            modListing.Description = modSummary;
-            modListing.ThumbnailUrl = thumbnailLink;
-            modListing.Version = version;
-   
-            modListing.Targets = new StringModTargetListingDictionary();
+            try
+            {
+                
+                modListing.Author = "ModIoModNetworker";
+                modListing.Title = modId;
+                modListing.Description = modSummary;
+                modListing.ThumbnailUrl = thumbnailLink;
+                modListing.Version = version;
 
-            ModIOModTarget modTarget = new ModIOModTarget();
-            modTarget.ThumbnailOverride = null;
-            
-            modTarget.GameId = 3809;
-            modTarget.ModId = long.Parse(numericalId);
-            modTarget.ModfileId = long.Parse(windowsDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                modListing.Targets = new StringModTargetListingDictionary();
 
-            modListing.Targets.Add("pc", modTarget);
+                ModIOModTarget modTarget = new ModIOModTarget();
+                modTarget.ThumbnailOverride = null;
 
-            ModIOModTarget androidTarget = new ModIOModTarget();
-            androidTarget.ThumbnailOverride = null;
+                modTarget.GameId = 3809;
+                modTarget.ModId = long.Parse(numericalId);
+                if (windowsDownloadLink != null)
+                {
+                    modTarget.ModfileId = long.Parse(windowsDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                }
 
-            androidTarget.GameId = 3809;
-            androidTarget.ModId = long.Parse(numericalId);
-            androidTarget.ModfileId = long.Parse(androidDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                modListing.Targets.Add("pc", modTarget);
 
-            modListing.Targets.Add("android", androidTarget);
+                ModIOModTarget androidTarget = new ModIOModTarget();
+                androidTarget.ThumbnailOverride = null;
 
-            string infoString = ToInfoString();
-            
-            modListing.Targets.Add(infoString, modTarget);
+                androidTarget.GameId = 3809;
+                androidTarget.ModId = long.Parse(numericalId);
+                if (androidDownloadLink != null)
+                {
+                    androidTarget.ModfileId = long.Parse(androidDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                }
+
+
+                modListing.Targets.Add("android", androidTarget);
+
+                string infoString = ToInfoString();
+
+                modListing.Targets.Add(infoString, modTarget);
+            }
+            catch (Exception e) {
+                MelonLogger.Error(e);
+            }
 
             return modListing;
-
         }
 
         public string ToInfoString() {

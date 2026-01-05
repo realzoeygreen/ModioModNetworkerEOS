@@ -63,7 +63,6 @@ namespace ModioModNetworker.Patches
                 ModInfo installedModInfo = ModInfoUtilities.GetModInfoForLevelBarcode(barcode);
                 if (installedModInfo != null)
                 {
-                    LobbyCreatePatch.LobbyMetaDataHelperPatch.lobbyNumericalId = installedModInfo.numericalId;
                     using (var writer = NetWriter.Create())
                     {
                         var data = ModlistData.Create(PlayerIDManager.LocalID, installedModInfo, ModlistData.ModType.LEVEL);
@@ -74,9 +73,6 @@ namespace ModioModNetworker.Patches
                         }
 
                     }
-                }
-                else {
-                    LobbyCreatePatch.LobbyMetaDataHelperPatch.lobbyNumericalId = "null";
                 }
             }
         }

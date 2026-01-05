@@ -10,6 +10,7 @@ using Il2CppSLZ;
 using Il2CppSLZ.Marrow.Pool;
 using LabFusion.Player;
 using LabFusion.Network.Serialization;
+using LabFusion.Entities;
 
 namespace ModioModNetworker.Patches
 {
@@ -46,10 +47,10 @@ namespace ModioModNetworker.Patches
         }
 
         // Also patch the catchup spawn
-        [HarmonyPatch(typeof(SpawnSender), nameof(SpawnSender.SendCatchupSpawn), typeof(byte), typeof(string), typeof(ushort), typeof(SerializedTransform), typeof(byte))]
+        [HarmonyPatch(typeof(SpawnSender), nameof(SpawnSender.SendCatchupSpawn), typeof(byte), typeof(string), typeof(ushort), typeof(SerializedTransform), typeof(byte), typeof(EntitySource))]
         private static class CatchupSpawnPatch
         {
-            public static void Prefix(byte owner, string barcode, ushort syncId, SerializedTransform serializedTransform, byte playerID)
+            public static void Prefix(byte ownerID, string barcode, ushort entityID, SerializedTransform serializedTransform, byte playerID, EntitySource source)
             {
                 if (NetworkInfo.IsHost)
                 {

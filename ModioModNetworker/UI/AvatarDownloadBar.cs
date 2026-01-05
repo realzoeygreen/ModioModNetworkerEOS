@@ -71,7 +71,8 @@ namespace ModioModNetworker.UI
             {
                 var head = manager.physicsRig.m_head;
                 bar.transform.position = head.position + Vector3.up * GetBarOffset(manager);
-                bar.transform.LookAt(Player.Head, Vector3.up);
+                bar.transform.forward = -(Player.Head.position - bar.transform.position);
+                //bar.transform.LookAt(Player.Head, Vector3.up);
             }
         }
         

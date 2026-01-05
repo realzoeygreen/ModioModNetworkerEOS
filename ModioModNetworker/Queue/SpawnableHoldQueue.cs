@@ -63,7 +63,7 @@ namespace ModioModNetworker.Queue
 
         private static void Handle(SpawnResponseData data)
         {
-            var crateRef = new SpawnableCrateReference(data.Barcode);
+            var crateRef = new SpawnableCrateReference(data.SpawnData.Barcode);
 
             var spawnable = new Spawnable()
             {
@@ -72,14 +72,8 @@ namespace ModioModNetworker.Queue
             };
 
             LocalAssetSpawner.Register(spawnable);
-
-            byte owner = data.OwnerID;
-            string barcode = data.Barcode;
-            ushort syncId = data.EntityID;
-            uint trackerId = data.TrackerID;
-
-            LocalAssetSpawner.Spawn(spawnable, data.SerializedTransform.position, data.SerializedTransform.rotation, (go) => {
-                SpawnResponseMessage.OnSpawnFinished(owner, barcode, syncId, go, trackerId);
+            LocalAssetSpawner.Spawn(spawnable, data.SpawnData.SerializedTransform.position, data.SpawnData.SerializedTransform.rotation, (go) => {
+                SpawnResponseMessage.OnSpawnFinished(data, go);
             });
         }
     }
