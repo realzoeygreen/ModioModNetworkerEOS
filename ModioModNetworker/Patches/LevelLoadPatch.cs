@@ -11,6 +11,7 @@ using Il2CppSLZ.Marrow.Warehouse;
 using LabFusion.Player;
 using LabFusion.Marrow;
 using LabFusion.Network.Serialization;
+using LabFusion.Scene;
 
 namespace ModioModNetworker.Patches
 {
@@ -34,19 +35,25 @@ namespace ModioModNetworker.Patches
                     // Clear the level queue no matter what because no matter what outcome it is, we are going to be loading a new level.
                     LevelHoldQueue.ClearQueue();
 
-                    if (MainClass.confirmedHostHasIt || MainClass.useRepo)
+                    if (!CrateFilterer.HasCrate<LevelCrate>(new Barcode(data.LevelBarcode)))
                     {
-                        if (!CrateFilterer.HasCrate<LevelCrate>(new Barcode(data.LevelBarcode)))
+                        
+                        LevelHoldQueue.SetQueue(new LevelHoldQueue.LevelHoldQueueData()
                         {
-                            LevelHoldQueue.SetQueue(new LevelHoldQueue.LevelHoldQueueData()
-                            {
-                                missingBarcode = data.LevelBarcode,
-                                _data = data
-                            });
-                            return false;
-                        }
-                    }
+                            missingBarcode = data.LevelBarcode,
+                            _data = data
+                        });
 
+                        if (!MainClass.confirmedHostHasIt) {
+                            LevelDownloaderManager.DownloadLevel(new LevelDownloaderManager.LevelDownloadInfo()
+                            {
+                                LevelBarcode = data.LevelBarcode,
+                                LevelHost = PlayerIDManager.HostSmallID
+                            });
+                        }
+
+                        return false;
+                    }
                 }
                 return true;
             }

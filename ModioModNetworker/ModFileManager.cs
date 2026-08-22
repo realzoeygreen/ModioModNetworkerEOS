@@ -35,7 +35,7 @@ namespace ModioModNetworker
     public class ModFileManager
     {
         public static string OAUTH_KEY = "";
-        public static string API_PATH = "https://api.mod.io/v1/games/3809/mods/";
+        public static string API_PATH = "https://g-3809.modapi.io/v1/games/3809/mods/";
 
         public static string MOD_FOLDER_PATH = Application.persistentDataPath + "/Mods";
 
@@ -388,7 +388,7 @@ namespace ModioModNetworker
 
             fetchingSubscriptions = true;
             
-            UnityWebRequest httpWebRequest = UnityWebRequest.Get("https://api.mod.io/v1/me/subscribed?_offset=" + shown + "&limit=400");
+            UnityWebRequest httpWebRequest = UnityWebRequest.Get("https://g-3809.modapi.io/v1/me/subscribed?_offset=" + shown + "&limit=400");
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
             var requestSent = httpWebRequest.SendWebRequest();
             requestSent.m_completeCallback += new Action<AsyncOperation>((asyncOperation) =>
@@ -449,6 +449,7 @@ namespace ModioModNetworker
             SpotlightOverride.LoadFromRegularURL();
             
             UnityWebRequest httpWebRequest = UnityWebRequest.Get($"https://mod.io/v1/games/@bonelab/mods?_limit=100&_offset={offset}&_sort=-popular"+ extension);
+
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
             var requestSent = httpWebRequest.SendWebRequest();
             requestSent.m_completeCallback += new Action<AsyncOperation>((asyncOperation) =>
@@ -492,7 +493,7 @@ namespace ModioModNetworker
 
         public static bool Subscribe(string numericalid)
         {
-            string url = "https://api.mod.io/v1/games/3809/mods/" + numericalid + "/subscribe";
+            string url = API_PATH + numericalid + "/subscribe";
             
             UnityWebRequest httpWebRequest = UnityWebRequest.Get(url);
             httpWebRequest.method = "POST";
@@ -559,7 +560,7 @@ namespace ModioModNetworker
 
         public static void UnSubscribe(string numericalId)
         {
-            string url = "https://api.mod.io/v1/games/3809/mods/" + numericalId + "/subscribe";
+            string url = API_PATH + numericalId + "/subscribe";
             
             UnityWebRequest httpWebRequest = UnityWebRequest.Get(url);
             httpWebRequest.method = "DELETE";
@@ -819,7 +820,6 @@ namespace ModioModNetworker
                     }
                     onCompleted?.Invoke(dynamicJson);
                 });
-                
             }
             catch (Exception e)
             {

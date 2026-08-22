@@ -21,11 +21,6 @@ namespace ModioModNetworker.Patches
 
                     SpawnResponseData data = received.ReadData<SpawnResponseData>();
 
-                    if (!MainClass.confirmedHostHasIt && !MainClass.useRepo)
-                    {
-                        return true;
-                    }
-
                     if (!MainClass.overrideFusionDL)
                     {
                         return true;

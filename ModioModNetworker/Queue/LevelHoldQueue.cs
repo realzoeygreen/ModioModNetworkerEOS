@@ -43,7 +43,6 @@ namespace ModioModNetworker.Queue
                 SaveToMenu = false,
                 ShowPopup = true,
             });
-
             queueData = data;
         }
 
@@ -88,7 +87,6 @@ namespace ModioModNetworker.Queue
 
             if (finishedLoadingLevel)
             {
-           
                 SpawnableHoldQueue.HandleAllSpawnResponseDatas();
                 finishedLoadingLevel = false;
             }
@@ -106,6 +104,7 @@ namespace ModioModNetworker.Queue
         private static void Handle(LevelLoadData data)
         {
             FusionSceneManager.SetTargetScene(data.LevelBarcode, data.LoadingScreenBarcode);
+            NetworkSceneManager.Purgatory = false;
         }
         
         

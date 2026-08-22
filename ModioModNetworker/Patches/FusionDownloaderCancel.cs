@@ -1,8 +1,10 @@
 ﻿using HarmonyLib;
+using LabFusion.Downloading;
 using LabFusion.Downloading.ModIO;
 using LabFusion.Entities;
 using LabFusion.Player;
 using LabFusion.RPC;
+using LabFusion.Scene;
 using MelonLoader;
 using ModioModNetworker.Data;
 using System;
@@ -13,24 +15,6 @@ using System.Threading.Tasks;
 
 namespace ModioModNetworker.Patches
 {
-
-    /*[HarmonyPatch(typeof(NetworkModRequester), "RequestMod")]
-    public class FusionDownloaderCancel
-    {
-        public static bool Prefix() {
-            return !MainClass.overrideFusionDL;
-        }
-    }
-
-    [HarmonyPatch(typeof(NetworkModRequester), "RequestAndInstallMod")]
-    public class FusionDownloaderCancelRequest
-    {
-        public static bool Prefix()
-        {
-            return !MainClass.overrideFusionDL;
-        }
-    }*/
-
     [HarmonyPatch(typeof(RigProgressBar), nameof(RigProgressBar.Visible), MethodType.Setter)]
     public class RigProgressBarPatchReport
     {
@@ -43,6 +27,31 @@ namespace ModioModNetworker.Patches
         }
     }
 
+    [HarmonyPatch(typeof(LevelDownloaderManager), "LoadWaitingScene")]
+    public class LevelDownloaderManagerPatch
+    {
+        public static bool Prefix() {
+            if (MainClass.overrideFusionDL) {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(NetworkModRequester), nameof(NetworkModRequester.RequestAndInstallMod))]
+    public class NetworkModRequestPatch
+    {
+        public static void Prefix(NetworkModRequester.ModInstallInfo installInfo)
+        {
+            if (MainClass.overrideFusionDL)
+            {
+
+                installInfo.BeginDownloadCallback = null;
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(ModIODownloader), nameof(ModIODownloader.EnqueueDownload))]
     public class ModIoDownloaderEnqueuePatch {
         public static bool Prefix(ModTransaction transaction) {
@@ -50,6 +59,15 @@ namespace ModioModNetworker.Patches
                 string attemptedModId = transaction.ModFile.ModID.ToString();
 
                 if (!MainClass.modNumericalsDownloadedDuringLobbySession.Contains(attemptedModId)) {
+
+                    DownloadCallback downloadCallback = transaction.Callback;
+
+                    bool isLevelDownload = false;
+
+                    if (downloadCallback.Method.DeclaringType == typeof(LevelDownloaderManager)) {
+                        isLevelDownload = true;
+                    }
+
                     string destination = "install_spawnable";
 
                     if (transaction.Reporter != null) {
@@ -67,6 +85,10 @@ namespace ModioModNetworker.Patches
                                 destination = "install_spawnable";
                             }
                         }
+                    }
+
+                    if (isLevelDownload) {
+                        destination = "install_level";
                     }
 
                     ModInfo.RequestModInfoNumerical(transaction.ModFile.ModID.ToString(), destination);

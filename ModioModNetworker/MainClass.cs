@@ -47,7 +47,7 @@ namespace ModioModNetworker
 {
     public struct ModioModNetworkerUpdaterVersion
     {
-        public const string versionString = "2.7.0";
+        public const string versionString = "2.8.1";
     }
     
     public class MainClass : MelonMod
@@ -198,6 +198,27 @@ namespace ModioModNetworker
             MultiplayerHooking.OnDisconnected += OnDisconnect;
             MultiplayerHooking.OnStartedServer += OnStartServer;
             NetworkPlayer.OnNetworkRigCreated += OnPlayerRepCreated;
+
+            AssetWarehouse.OnReady(new Action(() => {
+                AssetWarehouse.Instance.OnCrateAdded += new Action<Barcode>(s =>
+                {
+                    palletLock = false;
+                    LevelHoldQueue.CheckValid(s._id);
+                    SpawnableHoldQueue.CheckValid(s._id);
+                    
+                    foreach (var playerRep in NetworkPlayerUtilities.GetAllNetworkPlayers())
+                    {
+                        // Use reflection to get the _isAvatarDirty bool from the playerRep
+                        // This is so we can force the playerRep to update the avatar, just incase they had an avatar that we didnt previously have.
+                        var isAvatarDirty = playerRep.AvatarSetter.GetType().GetField("_isAvatarDirty", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        isAvatarDirty.SetValue(playerRep.AvatarSetter, true);
+                    }
+                    
+
+                });
+                assetWarehouseLoaded = true;
+                DeleteAllTempMods();
+            }));
         }
 
         private void OnLobbyCategoryMade(Page category, INetworkLobby lobby)
@@ -288,6 +309,7 @@ namespace ModioModNetworker
 
         public override void OnUpdate()
         {
+            
             foreach (var bar in AvatarDownloadBar.bars.Values)
             {
                 bar.Update();
@@ -325,31 +347,6 @@ namespace ModioModNetworker
                 {
                     ModFileManager.activeDownloadAction.Handle();
                     ModFileManager.activeDownloadAction = null;
-                }
-            }
-
-            if (!addedCallback)
-            { 
-                if (AssetWarehouse.Instance != null)
-                {
-                    AssetWarehouse.Instance.OnCrateAdded += new Action<Barcode>(s =>
-                    {
-                        palletLock = false;
-                        
-                        foreach (var playerRep in NetworkPlayerUtilities.GetAllNetworkPlayers())
-                        {
-                            // Use reflection to get the _isAvatarDirty bool from the playerRep
-                            // This is so we can force the playerRep to update the avatar, just incase they had an avatar that we didnt previously have.
-                            var isAvatarDirty = playerRep.AvatarSetter.GetType().GetField("_isAvatarDirty", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                            isAvatarDirty.SetValue(playerRep.AvatarSetter, true);
-                        }
-                        SpawnableHoldQueue.CheckValid(s._id);
-                        LevelHoldQueue.CheckValid(s._id);
-
-                    });
-                    addedCallback = true;
-                    assetWarehouseLoaded = true;
-                    DeleteAllTempMods();
                 }
             }
 
@@ -648,6 +645,8 @@ namespace ModioModNetworker
 
         private static void InternalPopulateTrending() {
             string json = trendingThreadString;
+
+
             trendingThreadString = "";
             var trending = JsonConvert.DeserializeObject<dynamic>(json);
             
@@ -721,10 +720,10 @@ namespace ModioModNetworker
                     if (valid)
                     {
                         modInfo.androidDownloadLink =
-                            $"https://api.mod.io/v1/games/3809/mods/{(string)modEntry["id"]}/files/{androidId}/download";
+                            $"{ModFileManager.API_PATH}{(string)modEntry["id"]}/files/{androidId}/download";
 
                         modInfo.windowsDownloadLink =
-                            $"https://api.mod.io/v1/games/3809/mods/{(string)modEntry["id"]}/files/{windowsId}/download";
+                            $"{ModFileManager.API_PATH}{(string)modEntry["id"]}/files/{windowsId}/download";
 
                         modInfo.isValidMod = true;
                     }
@@ -736,7 +735,7 @@ namespace ModioModNetworker
 
                     if (modInfo.mature && !downloadMatureContent)
                     {
-                        return;
+                        continue;
                     }
 
                     NetworkerMenuController.modIoRetrieved.Add(modInfo);
@@ -852,10 +851,10 @@ namespace ModioModNetworker
                     if (valid)
                     {
                         modInfo.androidDownloadLink =
-                            $"https://api.mod.io/v1/games/3809/mods/{sub["id"]}/files/{androidId}/download";
+                            $"{ModFileManager.API_PATH}{sub["id"]}/files/{androidId}/download";
 
                         modInfo.windowsDownloadLink =
-                            $"https://api.mod.io/v1/games/3809/mods/{sub["id"]}/files/{windowsId}/download";
+                            $"{ModFileManager.API_PATH}{sub["id"]}/files/{windowsId}/download";
                         
                         modInfo.isValidMod = true;
                     }
@@ -1052,13 +1051,13 @@ namespace ModioModNetworker
                             {
                                 int modFileId = (int) manifestInfo["objects"][targetPC.ToString()]["modfileId"];
                                 modId = (int) manifestInfo["objects"][targetPC.ToString()]["modId"];
-                                pcDownloadLink = $"https://api.mod.io/v1/games/3809/mods/{modId}/files/{modFileId}/download";
+                                pcDownloadLink = $"{ModFileManager.API_PATH}{modId}/files/{modFileId}/download";
                             }
                             if (targetAndroid != -1)
                             {
                                 int modFileId = manifestInfo["objects"][targetAndroid.ToString()]["modfileId"];
                                 modId = (int) manifestInfo["objects"][targetAndroid.ToString()]["modId"];
-                                androidDownloadLink = $"https://api.mod.io/v1/games/3809/mods/{modId}/files/{modFileId}/download";
+                                androidDownloadLink = $"{ModFileManager.API_PATH}{modId}/files/{modFileId}/download";
                             }
 
 

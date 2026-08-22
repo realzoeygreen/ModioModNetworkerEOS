@@ -13,6 +13,7 @@ using LabFusion.Utilities;
 using MelonLoader;
 using ModIoModNetworker.Ui;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace ModioModNetworker.Data
@@ -158,9 +159,15 @@ namespace ModioModNetworker.Data
 
                 modTarget.GameId = 3809;
                 modTarget.ModId = long.Parse(numericalId);
-                if (windowsDownloadLink != null)
-                {
-                    modTarget.ModfileId = long.Parse(windowsDownloadLink.Split("/files/")[1].Replace("/download", ""));
+
+                try {
+                    if (windowsDownloadLink != null)
+                    {
+                        modTarget.ModfileId = long.Parse(windowsDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                    }
+                }
+                catch (Exception e  ) {
+                    // Ignore
                 }
 
                 modListing.Targets.Add("pc", modTarget);
@@ -170,9 +177,16 @@ namespace ModioModNetworker.Data
 
                 androidTarget.GameId = 3809;
                 androidTarget.ModId = long.Parse(numericalId);
-                if (androidDownloadLink != null)
+
+                try
                 {
-                    androidTarget.ModfileId = long.Parse(androidDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                    if (androidDownloadLink != null)
+                    {
+                        androidTarget.ModfileId = long.Parse(androidDownloadLink.Split("/files/")[1].Replace("/download", ""));
+                    }
+                }
+                catch (Exception e) {
+                
                 }
 
 
@@ -444,7 +458,8 @@ namespace ModioModNetworker.Data
 
 
                 // Get data array and loop through it
-                dynamic data = jsonData["data"];
+                JArray data = jsonData["data"];
+                int dataLength = data.Count;
 
                 if (data == null)
                 {
@@ -463,8 +478,15 @@ namespace ModioModNetworker.Data
                 string prevAntiVersion = "0.0.0";
 
 
-                foreach (var mod in data)
+                // Reverse ordering as newer mods are at the bottom???
+                for (int i = dataLength - 1; i >= 0; i--)
                 {
+                    if (foundMod != null && antiPlatformMod != null) {
+                        break;
+                    }
+
+                    var mod = data[i];
+
                     dynamic platforms = mod["platforms"];
                     bool validMainPlatform = false;
                     bool validAntiPlatformMod = false;
@@ -517,7 +539,7 @@ namespace ModioModNetworker.Data
                     {
                         string modVersion = "" + (string)mod["version"];
                         // Compare versions x.x.x
-                        if (modVersion.CompareTo(prevVersion) > 0 || foundMod == null)
+                        if (foundMod == null)
                         {
                             foundMod = mod;
                             prevVersion = modVersion;
@@ -527,10 +549,11 @@ namespace ModioModNetworker.Data
                     if (validAntiPlatformMod)
                     {
                         string modVersion = "" + (string)mod["version"];
-                        if (modVersion.CompareTo(prevAntiVersion) > 0 || antiPlatformMod == null)
+                        if (antiPlatformMod == null)
                         {
                             antiPlatformMod = mod;
                             prevAntiVersion = modVersion;
+
                         }
                     }
                 }

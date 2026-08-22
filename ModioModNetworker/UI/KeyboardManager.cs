@@ -15,7 +15,9 @@ namespace ModioModNetworker.UI
         }
 
         public static void Backspace() {
-            typed = typed.Substring(0, typed.Length - 1);
+            if (typed.Length > 0) {
+                typed = typed.Substring(0, typed.Length - 1);
+            }
         }
     }
 }

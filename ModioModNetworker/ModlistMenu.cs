@@ -124,7 +124,7 @@ namespace ModioModNetworker
                     MainClass.melonPreferencesCategory.SaveToFile();
                 });
 
-            NetworkerMenuController.AddCheckboxSetting("Auto Download 18+ Content", MainClass.downloadMatureContent,
+            NetworkerMenuController.AddCheckboxSetting("Download Mature Content", MainClass.downloadMatureContent,
                 (b) =>
                 {
                     MainClass.downloadMatureContent = b;
