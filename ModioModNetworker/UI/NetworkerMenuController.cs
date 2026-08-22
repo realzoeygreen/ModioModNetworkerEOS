@@ -16,6 +16,7 @@ using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Il2CppInterop.Runtime.Attributes;
 using static System.Net.Mime.MediaTypeNames;
 using static UnityEngine.UI.Image;
 
@@ -433,6 +434,7 @@ namespace ModIoModNetworker.Ui
             maxPages = 0;
         }
 
+        [HideFromIl2Cpp]
         public void TriggerModInfoPopup(bool show, ModInfo modInfo) {
             rootAnimator = GetComponentInParent<Animator>();
             rootAnimator.SetTrigger("triggerpopup");
@@ -855,6 +857,7 @@ namespace ModIoModNetworker.Ui
             }
         }
 
+        [HideFromIl2Cpp]
         GameObject MakeModInfoObject(Transform parent, ModInfo modInfo, bool zeroPosition = true) {
 
 
@@ -1204,6 +1207,7 @@ namespace ModIoModNetworker.Ui
             SetMainCanvasColliderState(false);
         }
 
+        [HideFromIl2Cpp]
         private void SetKeyAction(string keyName, Action action)
         {
             GameObject key = keyboardPopup.transform.Find("Keyboard").Find(keyName).gameObject;

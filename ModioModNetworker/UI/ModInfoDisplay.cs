@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Il2CppTMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Il2CppInterop.Runtime.Attributes;
 
 namespace ModIoModNetworker.Ui
 {
@@ -46,7 +47,8 @@ namespace ModIoModNetworker.Ui
         public void OnModInfoPressed() {
             controller.TriggerModInfoPopup(true, modInfo);
         }
-
+        
+        [HideFromIl2Cpp]
         public void SetModInfo(ModInfo modInfo) {
 
             this.modInfo = modInfo;
