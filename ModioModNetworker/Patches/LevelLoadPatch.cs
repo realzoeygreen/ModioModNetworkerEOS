@@ -37,7 +37,7 @@ namespace ModioModNetworker.Patches
 
                     if (!CrateFilterer.HasCrate<LevelCrate>(new Barcode(data.LevelBarcode)))
                     {
-                        
+
                         LevelHoldQueue.SetQueue(new LevelHoldQueue.LevelHoldQueueData()
                         {
                             missingBarcode = data.LevelBarcode,
@@ -58,15 +58,15 @@ namespace ModioModNetworker.Patches
                 return true;
             }
         }
-        
-        [HarmonyPatch(typeof(LoadSender), nameof(LoadSender.SendLevelLoad), typeof(string), typeof(string), typeof(ulong))]
+
+        [HarmonyPatch(typeof(LoadSender), nameof(LoadSender.SendLevelLoad), typeof(string), typeof(string), typeof(string))]
         private static class SendLevelPatchClass {
-            
+
             public static void Prefix(string barcode, string loadBarcode, ulong userId)
             {
                 if (!NetworkInfo.IsHost)
                     return;
-                
+
                 ModInfo installedModInfo = ModInfoUtilities.GetModInfoForLevelBarcode(barcode);
                 if (installedModInfo != null)
                 {
@@ -83,7 +83,7 @@ namespace ModioModNetworker.Patches
                 }
             }
         }
-        
+
         [HarmonyPatch(typeof(LoadSender), nameof(LoadSender.SendLevelLoad), typeof(string), typeof(string))]
         private static class SendLevelPatchClassGeneric {
 
