@@ -24,7 +24,7 @@ using ModioModNetworker.Data;
 using ModioModNetworker.UI;
 using ModIoModNetworker.Ui;
 using Newtonsoft.Json;
-using Steamworks.Data;
+// using Steamworks.Data;
 using UnityEngine;
 using UnityEngine.Networking;
 using static Il2CppSLZ.Marrow.UnityExtensions.TransformExtensions;
@@ -61,7 +61,7 @@ namespace ModioModNetworker
         public static void Initialize()
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            
+
             /*_client = new WebClient();
             _client.DownloadProgressChanged += OnDownloadProgressChanged;
             _client.DownloadFileCompleted += OnDownloadFileCompleted;
@@ -72,7 +72,7 @@ namespace ModioModNetworker
         {
             activeDownloadAction = new DownloadAction(10);
         }
-       
+
 
         public static string FindFile(string path, string fileName)
         {
@@ -111,7 +111,7 @@ namespace ModioModNetworker
                 ModlistMenu.activeDownloadModInfo.modDownloadPercentage = progress;
             }
         }
-        
+
         public static void StopDownload()
         {
             if (isDownloading)
@@ -206,7 +206,7 @@ namespace ModioModNetworker
                     return false;
                 }
             }
-            
+
 
             if (activeDownloadQueueElement != null)
             {
@@ -219,7 +219,7 @@ namespace ModioModNetworker
             if (modInfo.mature && !MainClass.downloadMatureContent) {
                 return false;
             }
-            
+
             if (modInfo.version == null)
             {
                 modInfo.version = "0.0.0";
@@ -264,7 +264,7 @@ namespace ModioModNetworker
             UnityWebRequest request = UnityWebRequest.Get(url);
             request.method = "GET";
             request.downloadHandler = new DownloadHandlerFile(path);
-            
+
             activeDownloadWebRequest = request;
 
             request.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
@@ -387,7 +387,7 @@ namespace ModioModNetworker
             }
 
             fetchingSubscriptions = true;
-            
+
             UnityWebRequest httpWebRequest = UnityWebRequest.Get("https://g-3809.modapi.io/v1/me/subscribed?_offset=" + shown + "&limit=400");
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
             var requestSent = httpWebRequest.SendWebRequest();
@@ -407,14 +407,14 @@ namespace ModioModNetworker
                     {
                         return;
                     }
-                    
+
                     HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create("https://api.mod.io/v1/me/subscribed?_offset=" + shown + "&limit=400");
                     httpWebRequest.Headers.Add("Authorization", "Bearer " + OAUTH_KEY);
                     HttpWebResponse httpWebresponse = (HttpWebResponse) httpWebRequest.GetResponse();
                     StreamReader streamReader = new StreamReader(httpWebresponse.GetResponseStream());
                     string result = streamReader.ReadToEnd();
                     MainClass.subscriptionThreadString = result;
-                    
+
                     //MainClass.subscriptionThreadString = httpWebRequest.downloadHandler.text;
 
                     //httpWebresponse.Close();
@@ -440,14 +440,14 @@ namespace ModioModNetworker
             }
 
             fetchingTrending = true;
-            
+
             string extension = "&_q="+searchQuery;
             if (searchQuery == "") {
                 extension = "";
             }
 
             SpotlightOverride.LoadFromRegularURL();
-            
+
             UnityWebRequest httpWebRequest = UnityWebRequest.Get($"https://mod.io/v1/games/@bonelab/mods?_limit=100&_offset={offset}&_sort=-popular"+ extension);
 
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
@@ -494,7 +494,7 @@ namespace ModioModNetworker
         public static bool Subscribe(string numericalid)
         {
             string url = API_PATH + numericalid + "/subscribe";
-            
+
             UnityWebRequest httpWebRequest = UnityWebRequest.Get(url);
             httpWebRequest.method = "POST";
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
@@ -561,7 +561,7 @@ namespace ModioModNetworker
         public static void UnSubscribe(string numericalId)
         {
             string url = API_PATH + numericalId + "/subscribe";
-            
+
             UnityWebRequest httpWebRequest = UnityWebRequest.Get(url);
             httpWebRequest.method = "DELETE";
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
@@ -578,7 +578,7 @@ namespace ModioModNetworker
                     }
                 });
             });
-            
+
             // Make https request to unsubscribe
 
             /*Thread thread = new Thread(() =>
@@ -643,9 +643,9 @@ namespace ModioModNetworker
                     // Delete mod folder
                     string parentDirectory = Directory.GetParent(installedModInfo.catalogPath).FullName;
 
-                    
+
                     Directory.Delete(parentDirectory, true);
-                    
+
                 }
             }
             catch (Exception ex)
@@ -701,14 +701,14 @@ namespace ModioModNetworker
                 }
             }
             catch (Exception ex) {
-            
+
             }
         }
 
         public static void UnInstall(string numericalId)
         {
             InstalledModInfo installedModInfo = null;
-            
+
             foreach (var modInfo in MainClass.InstalledModInfos)
             {
                 if (modInfo.ModInfo.numericalId == numericalId)
@@ -748,15 +748,15 @@ namespace ModioModNetworker
 
             thread.Start();
         }
-        
+
         public static void GetJson(string mod, Action<string> onCompleted)
         {
             string link = API_PATH + mod + "/files";
             UnityWebRequest httpWebRequest = UnityWebRequest.Get(link);
             httpWebRequest.SetRequestHeader("Authorization", "Bearer " + OAUTH_KEY);
             var requestSent = httpWebRequest.SendWebRequest();
-            
-            
+
+
             requestSent.m_completeCallback += new Action<AsyncOperation>((op) =>
             {
                 if (httpWebRequest.result == UnityWebRequest.Result.ConnectionError || httpWebRequest.result == UnityWebRequest.Result.ProtocolError)
@@ -797,7 +797,7 @@ namespace ModioModNetworker
 
             return json;
         }*/
-        
+
         public static void GetRawModInfoJson(string mod, Action<dynamic> onCompleted)
         {
             string json = "";
@@ -849,7 +849,7 @@ namespace ModioModNetworker
                 MelonLogger.Error($"Error when fetching raw mod info for {mod}: ");
                 MelonLogger.Error(e);
             }
-            
+
             dynamic dynamicJson = JsonConvert.DeserializeObject<dynamic>(json);
 
 
@@ -892,7 +892,7 @@ public class DownloadAction
         {
             try
             {
-                
+
                 //string exportDirectory = ModFileManager.MOD_FOLDER_PATH.Replace("/", "\\") + "\\" + "tempfolder";
                 string exportDirectory = Path.Combine(ModFileManager.MOD_FOLDER_PATH, "tempfolder");
                 if (Directory.Exists(exportDirectory))
@@ -915,18 +915,18 @@ public class DownloadAction
                             Directory.CreateDirectory(path);
                             continue;
                         }
-                        
+
                         // Make sure directory exists
                         Directory.CreateDirectory(Path.GetDirectoryName(path));
- 
+
                         string fileName = Path.GetFileName(path);
                         string tempPath = Path.Combine(Path.GetDirectoryName(path), "tempExtractedFile.temp");
-                        
+
                         entry.ExtractToFile(tempPath, true);
-       
+
                         File.Move(tempPath, Path.Combine(Path.GetDirectoryName(tempPath), fileName));
                     }
-                    
+
                     archive.Dispose();
                 }
 
@@ -935,14 +935,14 @@ public class DownloadAction
                 // Pull the first folder out of the zip
                 string palletJsonFile = ModFileManager.FindFile(exportDirectory, "pallet.json");
 
-                
+
                 while (palletJsonFile != "")
                 {
                     string modFolder = Directory.GetParent(palletJsonFile).FullName;
                     MelonLogger.Msg("Mod folder is: " + modFolder);
                     // Make folder in mods folder named after the first directory
                     string[] split;
-                    
+
                     if (!HelperMethods.IsAndroid())
                     {
                         split = modFolder.Split('\\');
@@ -975,12 +975,12 @@ public class DownloadAction
                         }
                         Directory.Delete(modFolderDestination, true);
                     }
-                    
+
 
                     Directory.Move(modFolder, modFolderDestination);
                     // Create modinfo.json
                     string modInfoPath = modFolderDestination + "/modinfo.json";
-                    
+
                     string modInfoJson = (string) JsonConvert.SerializeObject(ModlistMenu.activeDownloadModInfo);
                     File.WriteAllText(modInfoPath, modInfoJson);
 
@@ -999,7 +999,7 @@ public class DownloadAction
                 File.Delete(ModFileManager.downloadPath);
                 // Delete loose folder
                 Directory.Delete(exportDirectory, true);
-               
+
                 MainClass.warehouseReloadRequested = true;
                 MainClass.RequestInstallCheck();
                 MainClass.subsChanged = true;
@@ -1018,4 +1018,3 @@ public class DownloadAction
         otherThread.Start();
     }
 }
-

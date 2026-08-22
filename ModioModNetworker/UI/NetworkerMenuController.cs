@@ -6,7 +6,7 @@ using ModioModNetworker.Data;
 
 using ModioModNetworker.UI;
 using ModioModNetworker.Utilities;
-using Steamworks.Ugc;
+// using Steamworks.Ugc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace ModIoModNetworker.Ui
     [RegisterTypeInIl2Cpp]
     public class NetworkerMenuController : MonoBehaviour
     {
-        public enum Panels { 
+        public enum Panels {
             MODIO,
             FILES,
             SETTINGS,
@@ -32,14 +32,14 @@ namespace ModIoModNetworker.Ui
             NONE
         }
 
-        public enum InstalledSort { 
+        public enum InstalledSort {
             INSTALLED,
             SUBSCRIBED,
             BLACKLIST
         }
 
-        public NetworkerMenuController(IntPtr intPtr) : base(intPtr) 
-        { 
+        public NetworkerMenuController(IntPtr intPtr) : base(intPtr)
+        {
         }
 
         Panels selectedPanel = Panels.NONE;
@@ -94,7 +94,7 @@ namespace ModIoModNetworker.Ui
 
         public static SpotlightOverride spotlightOverride = new SpotlightOverride();
 
-        
+
         void Awake()
         {
             instance = this;
@@ -320,13 +320,13 @@ namespace ModIoModNetworker.Ui
                 {
                     MainClass.PopulateSubscriptions();
                 }
-                
+
                 if (!MainClass.subscribedModIoNumericalIds.Contains(viewedInfo.numericalId)) {
                     MainClass.subscribedModIoNumericalIds.Add(viewedInfo.numericalId);
                 }
 
                 ModFileManager.Subscribe(viewedInfo.numericalId);
-                
+
             }
         }
 
@@ -371,7 +371,7 @@ namespace ModIoModNetworker.Ui
                 MainClass.blacklistedModIoIds.Remove(viewedInfo.numericalId);
                 MainClass.RemoveLineFromBlacklist(viewedInfo.numericalId);
 
-                
+
             }
             else {
                 if (viewedInfo.modId != null)
@@ -386,7 +386,7 @@ namespace ModIoModNetworker.Ui
 
                 if (viewedInfo.IsSubscribed())
                 {
-                    
+
                     ModFileManager.UnSubscribe(viewedInfo.numericalId);
                     if (viewedInfo.IsInstalled())
                     {
@@ -514,7 +514,7 @@ namespace ModIoModNetworker.Ui
             selectedInstallPart.SetActive(false);
             unselectedBlacklistWhole.SetActive(false);
             selectedBlacklistWhole.SetActive(false);
-            
+
 
             bool installed = modInfo.IsInstalled();
             bool subscribed = modInfo.IsSubscribed();
@@ -528,7 +528,7 @@ namespace ModIoModNetworker.Ui
                 unselectedSubscribe.SetActive(true);
                 selectedSubscribe.SetActive(false);
             }
-           
+
 
             bool shouldBeParted = false;
 
@@ -582,7 +582,7 @@ namespace ModIoModNetworker.Ui
                     maxPages = (int) Math.Ceiling((double) totalInstalled.Count / (double) maxDisplayPerPage);
                     UpdateArrowDisplays();
                     PopulateFiles(pageNumber);
-                    
+
                     break;
                 case InstalledSort.SUBSCRIBED:
                     filesTab.transform.Find("GridLayout").gameObject.SetActive(true);
@@ -675,7 +675,7 @@ namespace ModIoModNetworker.Ui
                 GameObject gridView = modIoTab.transform.Find("GridLayout").gameObject;
                 GameObject trendingFirstPage = modIoTab.transform.Find("TrendingFirstPage").gameObject;
 
-   
+
                 trendingFirstPage.SetActive(false);
                 gridView.SetActive(true);
 
@@ -685,7 +685,7 @@ namespace ModIoModNetworker.Ui
                 // Also switch destination parent to the trending one
                 // If we are not viewing trending (And rather, a specified mod), offset by 1 by adding
                 // Apply that given offset to the target below?
-                // Subtract 4 from starting otherwise 
+                // Subtract 4 from starting otherwise
 
                 int starting = maxDisplayPerPage * page;
 
@@ -696,7 +696,7 @@ namespace ModIoModNetworker.Ui
                     }
 
                     // Account for the extra missing because we aren't listing it in 1 2 3 order anymore
-                    
+
                     if (spotlightOverride.manualDisplayId != null)
                     {
                         starting -= 1;
@@ -709,7 +709,7 @@ namespace ModIoModNetworker.Ui
                     {
                         ModInfo modInfo = modIoRetrieved[starting + i];
                         MakeModInfoObject(gridView.transform, modInfo);
-    
+
                     }
                 }
             }
@@ -764,14 +764,14 @@ namespace ModIoModNetworker.Ui
                     }
                 }
 
-                
+
                 TMP_Text modTitleText = bigBanner.Find("ModTitleText").GetComponent<TMP_Text>();
                 TMP_Text descriptionText = bigBanner.Find("Description").GetComponent<TMP_Text>();
 
                 Transform thumbMask = bigBanner.Find("ThumbnailMaskMovedSlight");
                 RawImage thumbNail = thumbMask.Find("LargeThumbnail").GetComponent<RawImage>();
 
-                
+
 
                 ModInfo targetInfo = modIoRetrieved[0];
 
@@ -837,7 +837,7 @@ namespace ModIoModNetworker.Ui
                     descriptionText.text = targetInfo.modSummary;
                 }
             }
-            
+
         }
 
         void ClearAllChildren(Transform parent) {
@@ -868,7 +868,7 @@ namespace ModIoModNetworker.Ui
                 modInfoPanel.transform.localPosition = Vector3.forward;
                 modInfoPanel.transform.localRotation = Quaternion.identity;
             }
-            
+
             modInfoPanel.transform.localScale = Vector3.one;
 
             return modInfoPanel;
@@ -949,7 +949,7 @@ namespace ModIoModNetworker.Ui
                 {
                     continue;
                 }
-            
+
                 GameObject modInfoPanel = Instantiate(NetworkerAssets.modInfoDisplay);
                 ModInfoDisplay modInfoDisplay = modInfoPanel.AddComponent<ModInfoDisplay>();
                 modInfoDisplay.SetModInfo(modInfo);
@@ -969,14 +969,14 @@ namespace ModIoModNetworker.Ui
         void PopulateSettings(int page)
         {
             GameObject settingsHolder = settingsTab.transform.Find("SettingsHolder").gameObject;
-         
+
             int childCount = settingsHolder.transform.childCount;
             for (int i = 0; i < childCount; i++)
             {
                 Transform child = settingsHolder.transform.GetChild(i);
                 Destroy(child.gameObject);
             }
-         
+
             int starting = 3 * page;
             for (int i = 0; i < 3; i++)
             {
@@ -1095,7 +1095,7 @@ namespace ModIoModNetworker.Ui
 
             if (pageNumber > maxPages) {
                 pageNumber = maxPages;
-                
+
             }
 
             if (selectedPanel == Panels.MULTIPLAYER) {
@@ -1126,7 +1126,7 @@ namespace ModIoModNetworker.Ui
         }
 
         private void RegisterWholeKeyboard() {
-            // HILARIOUS KEYBOARD HAHAHA 
+            // HILARIOUS KEYBOARD HAHAHA
             // Swipez can you add a keyboard??? Swipez can you??? Can you do this?? Can you do that???
             // Can I STRANGE YOU TO DEATH??? CAN I CHOKE YOU UNTIL YOU TURN BLUE AND EXPLODE????? MAYBE!!!! MAYBE I CAN!!!! HAHAHAHAHAHAHAHA
             // https://www.youtube.com/watch?v=eTrUEuUlsrw
@@ -1171,7 +1171,7 @@ namespace ModIoModNetworker.Ui
             RegisterKey("'");
             RegisterKey("-");
             RegisterKey("=");
-            SetKeyAction("Backspace", () => { 
+            SetKeyAction("Backspace", () => {
                 KeyboardManager.Backspace();
             });
             SetKeyAction("Space", () => {
@@ -1221,7 +1221,7 @@ namespace ModIoModNetworker.Ui
                     stalledAction.action.Invoke();
                     toRemove.Add(stalledAction);
                 }
-                
+
             }
             stalledActions.RemoveAll((stall) => toRemove.Contains(stall));
             if (desired != null && selector != null)
