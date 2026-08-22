@@ -62,7 +62,7 @@ namespace ModioModNetworker.Patches
         [HarmonyPatch(typeof(LoadSender), nameof(LoadSender.SendLevelLoad), typeof(string), typeof(string), typeof(string))]
         private static class SendLevelPatchClass {
 
-            public static void Prefix(string barcode, string loadBarcode, ulong userId)
+            public static void Prefix(string barcode, string loadBarcode, string userId)
             {
                 if (!NetworkInfo.IsHost)
                     return;

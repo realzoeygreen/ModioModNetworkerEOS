@@ -84,7 +84,7 @@ namespace ModioModNetworker
                 {
                     using (var messageSent = NetMessage.ModuleCreate<ModlistMessage>(message.Bytes, CommonMessageRoutes.ReliableToClients))
                     {
-                        MessageSender.BroadcastMessageExcept(data.playerId, NetworkChannel.Reliable, messageSent);
+                        MessageSender.BroadcastMessageExcept((byte)data.playerId, NetworkChannel.Reliable, messageSent);
                     }
                 }
                 else

@@ -49,7 +49,7 @@ namespace ModioModNetworker
     {
         public const string versionString = "2.8.1";
     }
-    
+
     public class MainClass : MelonMod
     {
 
@@ -81,7 +81,7 @@ namespace ModioModNetworker
         private static int desiredSubs = 0;
 
         private bool addedCallback = false;
-        
+
         public static MelonPreferences_Category melonPreferencesCategory;
         private static MelonPreferences_Entry<string> modsDirectory;
         public static MelonPreferences_Entry<bool> autoDownloadAvatarsConfig;
@@ -104,10 +104,10 @@ namespace ModioModNetworker
         public static bool overrideFusionDL = false;
 
         public static List<string> modNumericalsDownloadedDuringLobbySession = new List<string>();
-        
+
         private static int subsShown = 0;
         private static int subTotal = 0;
-        
+
         public bool palletLock = false;
 
         public static bool confirmedHostHasIt = false;
@@ -205,7 +205,7 @@ namespace ModioModNetworker
                     palletLock = false;
                     LevelHoldQueue.CheckValid(s._id);
                     SpawnableHoldQueue.CheckValid(s._id);
-                    
+
                     foreach (var playerRep in NetworkPlayerUtilities.GetAllNetworkPlayers())
                     {
                         // Use reflection to get the _isAvatarDirty bool from the playerRep
@@ -213,7 +213,7 @@ namespace ModioModNetworker
                         var isAvatarDirty = playerRep.AvatarSetter.GetType().GetField("_isAvatarDirty", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                         isAvatarDirty.SetValue(playerRep.AvatarSetter, true);
                     }
-                    
+
 
                 });
                 assetWarehouseLoaded = true;
@@ -227,7 +227,7 @@ namespace ModioModNetworker
             {
                 category.CreateFunction("ModioModNetworker Active On Server", Color.cyan, () => { });
             }
-            
+
             /*if (lobby.TryGetMetadata("LevelBarcode", out var barcode))
             {
                 if (!FusionSceneManager.HasLevel(barcode)) {
@@ -244,7 +244,7 @@ namespace ModioModNetworker
                                 isMenuItem = false,
                                 isPopup = true,
                             });
-                            
+
                             // Native install because it was of our own volition
                             ModInfo.RequestModInfoNumerical(numerical, "install_native");
                         });
@@ -253,7 +253,7 @@ namespace ModioModNetworker
             }*/
 
 
-                
+
             // TODO: REPO DOWN
             if (lobby.TryGetMetadata("LevelBarcode", out var barcode))
             {
@@ -290,7 +290,7 @@ namespace ModioModNetworker
                                 });
                             }
                         }
-                        
+
                     });
                 }
             }
@@ -309,7 +309,7 @@ namespace ModioModNetworker
 
         public override void OnUpdate()
         {
-            
+
             foreach (var bar in AvatarDownloadBar.bars.Values)
             {
                 bar.Update();
@@ -317,7 +317,7 @@ namespace ModioModNetworker
 
             ThumbnailThreader.HandleQueue();
             MainThreadManager.HandleQueue();
-            
+
             LevelHoldQueue.Update();
 
             if (ModFileManager.activeDownloadQueueElement != null)
@@ -370,21 +370,21 @@ namespace ModioModNetworker
                         PopupLength = 2f
                     });
                     MelonLogger.Msg("Finished refreshing mod.io subscriptions!");
-                    
+
                     outOfDateModInfos.Clear();
                 }
             }
-            
+
             //stopwatch.Stop();
             //MelonLogger.Msg("Subs refreshing check took "+stopwatch.Elapsed.TotalMilliseconds+"ms");
-            
-            
+
+
             //stopwatch = Stopwatch.StartNew();
-            
+
             //stopwatch.Stop();
             //MelonLogger.Msg("Active download web request check took "+stopwatch.Elapsed.TotalMilliseconds+"ms");
-            
-            
+
+
             //stopwatch = Stopwatch.StartNew();
 
             if (warehouseReloadRequested && assetWarehouseLoaded && AssetWarehouse.Instance._initialLoaded && !palletLock)
@@ -405,7 +405,7 @@ namespace ModioModNetworker
 
                     AssetWarehouse.Instance.LoadAndUpdatePalletManifest(manifest.Pallet, ModlistMenu.activeDownloadModInfo.ToModListing(), manifest.PalletPath, manifest.CatalogPath);
                     warehousePalletReloadTargets.RemoveAt(0);
-                    update = true; 
+                    update = true;
                 }
 
                 if (warehouseReloadFolders.Count > 0)
@@ -524,7 +524,7 @@ namespace ModioModNetworker
             {
                 installedMods.Clear();
                 InstalledModInfos.Clear();
-                
+
                 NetworkerMenuController.totalInstalled.Clear();
                 ModlistMenu.installPage = 0;
                 Thread thread = new Thread(() =>
@@ -649,10 +649,10 @@ namespace ModioModNetworker
 
             trendingThreadString = "";
             var trending = JsonConvert.DeserializeObject<dynamic>(json);
-            
+
             foreach (var modEntry in trending["data"])
             {
-                
+
                 string modUrl = (string) modEntry["profile_url"];
                 string numericalId = "" + modEntry["id"];
                 string modTitle = (string) modEntry["name"];
@@ -665,7 +665,7 @@ namespace ModioModNetworker
                 int androidId = 0;
                 try
                 {
-                    
+
                     foreach (var platform in modEntry["platforms"])
                     {
                         if (((string)platform["platform"]) == "windows")
@@ -767,7 +767,7 @@ namespace ModioModNetworker
                 MelonLogger.Msg("No subscriptions found!");
                 return;
             }
-            
+
             foreach (var sub in subs["data"])
             {
                 if ((int)sub["game_id"] == 3809)
@@ -775,7 +775,7 @@ namespace ModioModNetworker
                     count++;
                 }
             }
-            
+
             desiredSubs += count;
 
             while (Data.ModInfo.modInfoThreadRequests.TryDequeue(out var useless))
@@ -829,7 +829,7 @@ namespace ModioModNetworker
                             }
                         }
                     }
-                    
+
                     if ((int)sub["status"] == 3)
                     {
                         valid = false;
@@ -855,14 +855,14 @@ namespace ModioModNetworker
 
                         modInfo.windowsDownloadLink =
                             $"{ModFileManager.API_PATH}{sub["id"]}/files/{windowsId}/download";
-                        
+
                         modInfo.isValidMod = true;
                     }
-                    
+
                     ReceiveSubModInfo(modInfo);
                 }
             }
-            
+
             subsShown += resultCount;
 
             if (subTotal - subsShown > 0)
@@ -1115,7 +1115,7 @@ namespace ModioModNetworker
             ModlistMenu.Clear();
             confirmedHostHasIt = false;
             modNumericalsDownloadedDuringLobbySession.Clear();
-            
+
             DeleteAllTempMods();
         }
 
@@ -1132,7 +1132,7 @@ namespace ModioModNetworker
                 SendAllAvatars();
             }
         }
-        
+
         public void OnPlayerRepCreated(NetworkPlayer networkPlayer, RigManager manager)
         {
             if (!networkPlayer.NetworkEntity.IsOwner) {
@@ -1151,7 +1151,7 @@ namespace ModioModNetworker
 
                     using (var message = NetMessage.ModuleCreate<ModlistMessage>(writer, CommonMessageRoutes.ReliableToClients))
                     {
-                        MessageSender.BroadcastMessageExcept(keyPair.Key, NetworkChannel.Reliable, message);
+                        MessageSender.BroadcastMessageExcept((byte)keyPair.Key, NetworkChannel.Reliable, message);
                     }
                 }
             }
@@ -1188,7 +1188,7 @@ namespace ModioModNetworker
             {
                 CreateDefaultAuthText(MODIO_AUTH_TXT_DIRECTORY);
             }
-            
+
             if (!File.Exists(MODIO_BLACKLIST_TXT_DIRECTORY))
             {
                 CreateDefaultBlacklistText(MODIO_BLACKLIST_TXT_DIRECTORY);
@@ -1197,8 +1197,8 @@ namespace ModioModNetworker
 
         private void CreateDefaultBlacklistText(string directory)
         {
-            using (StreamWriter sw = File.CreateText(directory))    
-            {    
+            using (StreamWriter sw = File.CreateText(directory))
+            {
                 sw.WriteLine("#                       ----- WELCOME TO THE MOD.IO BLACKLIST TXT! -----");
                 sw.WriteLine("#");
                 sw.WriteLine("# This file is where you put mods that you DO NOT want to download under any circumstances.");
@@ -1216,8 +1216,8 @@ namespace ModioModNetworker
 
         private void CreateDefaultAuthText(string directory)
         {
-            using (StreamWriter sw = File.CreateText(directory))    
-            {    
+            using (StreamWriter sw = File.CreateText(directory))
+            {
                 sw.WriteLine("#                       ----- WELCOME TO THE MOD.IO AUTH TXT! -----");
                 sw.WriteLine("#");
                 sw.WriteLine("# Put your mod.io OAuth token in this file, and it will be used to download mods from the mod.io network.");
@@ -1228,9 +1228,9 @@ namespace ModioModNetworker
                 sw.WriteLine("# The token is pretty long, so make sure you copy the entire thing. Make sure you're copying the token, not the key.");
                 sw.WriteLine("# Once you've copied the token, paste it in this file, replacing the text labeled REPLACE_THIS_TEXT_WITH_YOUR_TOKEN.");
                 sw.WriteLine("AuthToken=REPLACE_THIS_TEXT_WITH_YOUR_TOKEN");
-            }   
+            }
         }
-        
+
         private List<string> ReadBlacklist()
         {
             // Read the file and get the AuthToken= line
@@ -1243,7 +1243,7 @@ namespace ModioModNetworker
                     blacklist.Add(line.Trim());
                 }
             }
-            
+
             return blacklist;
         }
 
@@ -1285,7 +1285,7 @@ namespace ModioModNetworker
                     builtString += line;
                 }
             }
-            
+
             return builtString.Replace("AuthToken=", "").Replace("REPLACE_THIS_TEXT_WITH_YOUR_TOKEN", "").Trim();
         }
     }
